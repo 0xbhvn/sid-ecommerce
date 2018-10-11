@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
+use App\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +39,19 @@ class CartController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
-        //
+        if(Cart::where('user_id', auth()->id())->where('product_id', $product->id)->exists())
+        {
+            Cart::where('user_id', auth()->id())->where('product_id', $product->id)->increment('quantity');
+        }
+        else
+        {
+            Cart::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+            ]);
+        }
     }
 
     /**
