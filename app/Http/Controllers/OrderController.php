@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Cart;
 use App\Order;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $items = Order::where('user_id', auth()->id())->get();
+
+        return view('orders.index', compact('items'));
     }
 
     /**
@@ -29,7 +32,7 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -38,9 +41,22 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Cart $cart)
     {
-        //
+        $items = Cart::where('user_id', auth()->id())->get();
+
+        foreach($items as $item)
+        {
+            Order::create([
+                'user_id' => auth()->id(),
+                'product_id' => $item->product->id,
+                'quantity' => $item->quantity
+            ]);
+
+            Cart::where('id', $item->id)->delete();
+        }
+
+        return redirect('/order');
     }
 
     /**

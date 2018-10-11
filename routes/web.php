@@ -17,4 +17,11 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/', 'ProductController@index');
 
-Route::get('/cart/add/product/{product}', 'CartController@store');
+Route::get('/cart', 'CartController@index');
+Route::get('/cart/add/product/{product}/', 'CartController@store');
+Route::post('/cart/update/{cart}/', 'CartController@update');
+Route::get('/cart/delete/{cart}/', 'CartController@destroy');
+
+Route::post('/order/create/', 'OrderController@store');
+Route::get('/order/', 'OrderController@index');
+

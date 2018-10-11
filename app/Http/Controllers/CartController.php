@@ -20,7 +20,10 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
+        $sum = 0;
+        $items = Cart::where('user_id', auth()->id())->get();
+
+        return view('cart.index', compact('items', 'sum'));
     }
 
     /**
@@ -52,6 +55,8 @@ class CartController extends Controller
                 'product_id' => $product->id,
             ]);
         }
+
+        return redirect('/cart');
     }
 
     /**
@@ -85,7 +90,10 @@ class CartController extends Controller
      */
     public function update(Request $request, Cart $cart)
     {
-        //
+        $quantity = request('quantity');
+        Cart::where('id', $cart->id)->update(['quantity' => $quantity]);
+
+        return redirect('/cart');
     }
 
     /**
@@ -94,8 +102,10 @@ class CartController extends Controller
      * @param  \App\Cart  $cart
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Cart $cart)
+    public function destroy(Cart $cart, Product $product)
     {
-        //
+        Cart::where('id', $cart->id)->delete();
+
+        return redirect('/cart');
     }
 }
