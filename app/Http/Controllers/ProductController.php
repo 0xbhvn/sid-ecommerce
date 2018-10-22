@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Product;
 use Illuminate\Http\Request;
 
+use Image;
+
+use Intervention\Image\Exception\NotReadableException;
+
 class ProductController extends Controller
 {
     public function __construct()
@@ -31,7 +35,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.product.create');
     }
 
     /**
@@ -42,7 +46,33 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $product = Product::create([
+            'name' => request('name'),
+            'price' => request('price'),
+            'quantity' => request('quantity')
+        ]);
+
+        $files = request('file');
+
+        if($files)
+        {
+            $count = $product->photos;
+
+            foreach($files as $file)
+            {
+                $count++;
+                $dash = $file->getRealPath();
+                $image = Image::make($dash);
+                $image->resize(600, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })->encode('jpg')->save('images/'.$product->id.'-'.$count.'.jpg');
+            }
+
+            $product->photos = $count;
+        }
+
+        return redirect('/admin');
     }
 
     /**

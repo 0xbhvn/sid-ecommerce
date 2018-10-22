@@ -91,7 +91,16 @@ class CartController extends Controller
     public function update(Request $request, Cart $cart)
     {
         $quantity = request('quantity');
-        Cart::where('id', $cart->id)->update(['quantity' => $quantity]);
+        $product = Product::where('id', $cart->product_id)->first();
+
+        if($product->quantity < $quantity)
+        {
+            Cart::where('id', $cart->id)->update(['quantity' => $product->quantity]);
+        }
+        else
+        {
+            Cart::where('id', $cart->id)->update(['quantity' => $quantity]);
+        }
 
         return redirect('/cart');
     }
