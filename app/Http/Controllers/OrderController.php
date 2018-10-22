@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cart;
 use App\Order;
+use App\Product;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -23,6 +24,13 @@ class OrderController extends Controller
         $items = Order::where('user_id', auth()->id())->get();
 
         return view('orders.index', compact('items'));
+    }
+
+    public function adminIndex()
+    {
+        $items = Order::orderByDesc('created_at')->get();
+
+        return view('admin.order.index', compact('items'));
     }
 
     /**
@@ -47,11 +55,13 @@ class OrderController extends Controller
 
         foreach($items as $item)
         {
-            Order::create([
+            $order = Order::create([
                 'user_id' => auth()->id(),
                 'product_id' => $item->product->id,
                 'quantity' => $item->quantity
             ]);
+
+            Product::where('id', $order->product_id)->decrement('quantity', $order->quantity);
 
             Cart::where('id', $item->id)->delete();
         }

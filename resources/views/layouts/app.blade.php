@@ -49,6 +49,20 @@
                                 @endif
                             </li>
                         @else
+                            @if(auth()->user()->is_admin)
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/admin/product/create') }}">Add Product</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url('/admin/orders') }}">Orders</a>
+                                </li>
+                            @endif
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/cart') }}">Cart</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/order') }}">Your orders</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
